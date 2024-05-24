@@ -1,1 +1,113 @@
-# Text Generation Detection
+# RNN and XGBoost
+
+XGBoost model:
+- xgboost_SMOTE.py – Normal XGBoost model.
+- xgboost_gridsearch.py – XGBoost with gridsearch hyperparameter tuning.
+Insert file path(s) near at the top of the file(s) and run to create the classifier model.
+
+- test_xgb.py – To test the XGBoost model(s) on a test set.
+
+Insert file path(s) and model path near at the top of the file and run to predict and output a csv according to competition requirements.
+
+RNN model:
+- RNN_LSTM_simple.py – RNN with relatively basic architecture .
+- RNN_LSTM_complex.py – RNN with more complex architecture.
+- RNN_DANN.py – RNN with integrated DANN architecture.
+Insert file path(s) near at the top of the file(s) and run to create the classifier model.
+
+- test_rnn.py – To test the RNN model(s) on a test set.
+
+Insert file path(s) and model path near at the top of the file and run to predict and output a csv according to competition requirements.
+
+Other files:
+- dataset_analysis.py – File used for preprocessing data, and also provide information of data input.
+- utils.py – Utility functions.
+
+# CNN
+Assignment 1: Implementation of Combined CNNs
+
+CNN.ipynb, this notebook implements a two-tiered CNN approach. Initially, a CNN predicts the domain of the text, which is then incorporated into a subsequent CNN. This second CNN uses both text and domain information to classify if a sequence is human-generated or machine-generated.
+
+Table of Contents
+
+1. Preprocessing Training Data
+2. Formating and Combining Domain Data
+3. Undersampling of Overrepresented Models
+4. Oversampling Underrepresented Data using SMOTE
+5. CNN Model for Domain Classification
+6. Binary Classification Model for Human/Machine Generated Text
+7. Prediction on Test Data
+8. Write Results to File
+--------------------------------------------------------------------------------------------------
+Key Features:
+
+Two-tiered CNN Approach: The first multilabel CNN classifies domain, which then informs the second binary CNN.
+
+Domain Classification
+The secuences are classfied as:
+0 - machine generated domain 1
+1 - machine generated domain 2
+2 - machine generated domain 1
+3 - machine generated domain 2
+
+Binary Classification
+The sequences are classified as:
+1 - Human generated
+0 - Machine generated
+
+Data Resampling: Due to class imbalances, the notebook includes processes for both undersampling overrepresented classes and oversampling underrepresented classes using SMOTE. Output: The predicted labels for the test data are saved into an output.csv file.
+
+-------------------------------------------------------------------------------------------------
+Usage:
+
+Run the notebook cells sequentially from the beginning to process data, train the models, and obtain predictions on the test dataset which will. File pathways to the domain 1, domain 2 training sets and the testsets are entered under the "Pathways for training and test data" section in the beginning of the notebook.
+
+# Ensemble Approach
+FILES:
+* The main program to run is called "main.py"
+* This file uses ensamble method by training logistic, random forest and svm models on the different domains,
+and then combining the models through majority voting / stacking to get final predictions
+* filenames:
+- path1, path2: put names of big dataset
+- kaggle_test_set: the path to the test-set in kaggle
+- path3-8: here, a premade test and training dataset was used to evaluate the models
+
+
+if __name__ == '__main__':
+
+1) CREATE MODEL-CLASSIFICATION MODELS
+- In the first part of the main-function, it is possible to create (logistic regression) models that predict the model
+- These predictions are later added as features to the final TF-IDF vectors used to classify the text samples
+- Choose dataset 1,2,3 depending on what dataset the model should be trained on
+- These models are already saved into domain1, domain2, domain3 --> This step is thus not neccessary to run
+
+2) CREATE TEXT-CLASSIFICATION MODELS
+- Choose the method: "svm", "random forest" or default, which is logistic regression
+- Choose what dataset the model should be trained on: "1" for domain1, "2" for domain2, and "3" for domain1+domain2
+- Choose if the models should be trained on full dataset (full_dataset= "yes") or not (fulL_dataset="")
+    * Train the models on the full dataset if the aim is to classify the kaggle test data
+    * Choose to train on parts of the dataset, if the aim is to evaluate the models using testdata from existing dataset.
+- filename: where the created model is saved.
+
+3) CHOOSE TESTDATA
+- Here, choose what data the models should predict
+- Choice= "1" for data from domain1, "2" for data from domain2 and "3" for data from domain1+domain2. "4" is the kaggle test datafile
+- full_dataset = "yes" --> use the whole dataset as testdata. This is applicable for the kaggle dataset
+- full_dataset = "" --> uses test data files (20% of original dataset)
+
+4) LOAD MODELS AND EVALUATE
+- Here, already saved models can be loaded and evaluated
+- Keep in mind: don't call the function "evaluate" if choice="4" (kaggle test data), since we have no true labels for this dataset
+- If we want an output file that can be submitted to kaggle, call output(predictions), where predictions are our final predictions
+
+For example:
+* The below code loads the model from file: "small_forest_1"
+* Uses the classification model trained on domain1 to predict model which is added as a feature to the feature vector
+* The predictions are then evaluated
+--> Change the filename 'small_forest_1.sav' if you want to load model from somewhere else
+--> Change 'domain1.sav' if the model predictions should be based on a model trained on different dataset
+--> for a model trained on dataset 1 (like small_forest_1), the domain-classification
+
+ forest1, forest_test1 = load_model('small_forest_1.sav', test_data, 'domain1.sav')
+ forest_pred_1 = forest1.predict(forest_test1.test_x)
+ evaluate(forest_pred_1, test_data.labels)
