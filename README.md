@@ -1,1 +1,1 @@
-# Text_Generation_Detection
+# Text Generation Detection
